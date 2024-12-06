@@ -1,0 +1,16 @@
+{
+  "name": "pointssystem_cypress",
+  "version": "1.0.0",
+  "description": "Cypress tests for pointssystem",
+  "main": "cypress.config.js",
+  "scripts": {
+    "test": "cypress open", 
+    "test:headless": "cypress run"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "cypress": "^12.10.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
