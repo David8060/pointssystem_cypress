@@ -7,6 +7,8 @@ on:
   pull_request:
     branches:
       - main # Trigger on pull requests to 'main'
+  schedule:
+    - cron: '0 9 * * *'
 
 jobs:
   cypress-run:
@@ -26,3 +28,4 @@ jobs:
 
     - name: Run Cypress tests
       run: npx cypress run --browser chrome
+      working-directory: ./pointssystem_cypress 
