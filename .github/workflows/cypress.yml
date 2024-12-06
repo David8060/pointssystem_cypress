@@ -7,8 +7,6 @@ on:
   pull_request:
     branches:
       - main  # Trigger on pull requests to 'main'
-  schedule:
-    - cron: '0 9 * * *'  # Run every day at 9:00 AM UTC
 
 jobs:
   cypress-run:
