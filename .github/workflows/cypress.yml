@@ -3,10 +3,12 @@ name: Run Cypress Tests
 on:
   push:
     branches:
-      - master  # Trigger on push to 'main'
+      - master  # Trigger on push to 'master'
   pull_request:
     branches:
-      - master  # Trigger on pull requests to 'main'
+      - master  # Trigger on pull requests to 'master'
+  schedule:
+    - cron: '0 9 * * *'  # Run every day at 9:00 AM UTC
 
 jobs:
   cypress-run:
@@ -22,8 +24,9 @@ jobs:
         node-version: 16
 
     - name: Install dependencies
-      run: npm install  # Use `npm install` here since `npm ci` needs a package-lock.json
+      run: npm install
+      working-directory: ./  # Ensure this points to the correct directory
 
     - name: Run Cypress tests
       run: npx cypress run --browser chrome
-      working-directory: ./
+      working-directory: ./  # Ensure this points to the correct directory
