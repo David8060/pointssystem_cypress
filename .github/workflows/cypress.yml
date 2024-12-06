@@ -3,10 +3,10 @@ name: Run Cypress Tests
 on:
   push:
     branches:
-      - main  # Trigger on push to 'main'
+      - master  # Trigger on push to 'main'
   pull_request:
     branches:
-      - main  # Trigger on pull requests to 'main'
+      - master  # Trigger on pull requests to 'main'
 
 jobs:
   cypress-run:
