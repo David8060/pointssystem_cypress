@@ -292,6 +292,8 @@ describe('Points System User Feed', () => {
 
         writeComment('tst');
 
+        cy.wait(config.waitTimes.pageLoad); // Wait for page load or update
+
         const reactions = ['like', 'love', 'haha', 'sad', 'wow']; // Array with the reaction labels
 
         reactions.forEach((reaction, index) => {
@@ -376,8 +378,8 @@ describe('Points System User Feed', () => {
                 .first()
                 .should('have.text', 'like'); // Ensure the reaction is reset to "like"
 
-                
-                });
+
+        });
 
 
     });
