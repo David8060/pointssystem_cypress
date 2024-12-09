@@ -3,21 +3,12 @@ name: Run Cypress Tests
 on:
   push:
     branches:
-<<<<<<< HEAD
-      - main # Trigger on push to 'main'
-  pull_request:
-    branches:
-      - main # Trigger on pull requests to 'main'
-  schedule:
-    - cron: '0 9 * * *'
-=======
       - master  # Trigger on push to 'master'
   pull_request:
     branches:
       - master  # Trigger on pull requests to 'master'
   schedule:
     - cron: '0 9 * * *'  # Run every day at 9:00 AM UTC
->>>>>>> 15f68cc432919e9083da92f41961b0bea17772ba
 
 jobs:
   cypress-run:
@@ -33,17 +24,10 @@ jobs:
         node-version: 16
 
     - name: Install dependencies
-<<<<<<< HEAD
-      run: npm ci
-
-    - name: Run Cypress tests
-      run: npx cypress run --browser chrome
-      working-directory: ./pointssystem_cypress 
-=======
       run: npm install
       working-directory: ./  # Ensure this points to the correct directory
 
     - name: Run Cypress tests
       run: npx cypress run --browser chrome
       working-directory: ./  # Ensure this points to the correct directory
->>>>>>> 15f68cc432919e9083da92f41961b0bea17772ba
+
