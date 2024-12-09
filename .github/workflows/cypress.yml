@@ -31,3 +31,12 @@ jobs:
       run: npx cypress run --browser chrome
       working-directory: ./  # Ensure this points to the correct directory
 
+    # Upload the test artifacts (videos and screenshots) as GitHub Actions artifacts
+    - name: Upload Cypress test artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: cypress-artifacts
+        path: |
+          cypress/videos
+          cypress/screenshots
+
