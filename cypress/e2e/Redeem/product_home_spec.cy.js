@@ -6,10 +6,10 @@ describe('interactions with product and shopping bag', () => {
     beforeEach(() => {
         // Use the custom command to login and visit the page
         cy.loginAuthentication(config.urls.loginUrl, config.authCredentials.username, config.authCredentials.password);
-        cy.wait(config.waitTimes.pageLoad); // Wait for elements to load
+        cy.wait(config.waitTimes.longWait); // Wait for elements to load
 
         cy.loginToPage(config.loginCredentials.username, config.loginCredentials.password);
-        cy.wait(config.waitTimes.mediumWait);
+        cy.wait(config.waitTimes.longWait);
 
         cy.viewport(1920, 980);
 
