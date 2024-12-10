@@ -29,7 +29,7 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    # 4. Cache Cypress binary
+    # 4. Cache Cypress binary path
     - name: Cache Cypress binary
       uses: actions/cache@v3
       with:
@@ -39,21 +39,23 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-cypress-
 
-    # 5. Install Cypress
+    # 5. Ensure permissions are correct for Cypress binary before installation
+    - name: Fix permissions on Cypress binary
+      run: chmod -R 755 ./node_modules/.bin
+
+    # 6. Install Cypress
     - name: Cypress install
       run: npx cypress install
 
-    # 6. Fix permissions for Cypress binary and parent directories
-    - name: Fix permissions for Cypress binary
+    # 7. Check permissions directly after Cypress install
+    - name: Ensure Cypress has execute permissions
       run: chmod +x ./node_modules/.bin/cypress
-    - name: Fix permissions recursively for node_modules
-      run: chmod -R 755 ./node_modules
 
-    # 7. Run Cypress tests
+    # 8. Run Cypress tests
     - name: Run Cypress tests
       run: npx cypress run --browser chrome
 
-    # 8. Upload Cypress test artifacts
+    # 9. Upload Cypress test artifacts
     - name: Upload Cypress test artifacts
       uses: actions/upload-artifact@v3
       with:
@@ -62,7 +64,7 @@ jobs:
           cypress/videos
           cypress/screenshots
 
-    # 9. Send success email
+    # 10. Send success email
     - name: Send success email
       if: success()
       run: |
@@ -72,7 +74,7 @@ jobs:
         EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
         EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
 
-    # 10. Send failure email
+    # 11. Send failure email
     - name: Send failure email
       if: failure()
       run: |
