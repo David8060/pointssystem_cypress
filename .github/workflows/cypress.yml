@@ -15,21 +15,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout the code
+    # 1. Checkout code
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Step 2: Set up Node.js
+    # 2. Set up Node.js
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 16
 
-    # Step 3: Install dependencies
+    # 3. Install dependencies
     - name: Install dependencies
       run: npm install
 
-    # Step 4: Cache Cypress binary to avoid re-downloading it
+    # 4. Cache Cypress binary
     - name: Cache Cypress binary
       uses: actions/cache@v3
       with:
@@ -39,19 +39,21 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-cypress-
 
-    # Step 5: Install Cypress
+    # 5. Install Cypress
     - name: Cypress install
       run: npx cypress install
 
-    # Step 6: Fix permissions for Cypress binary
-    - name: Fix permissions for Cypress
-      run: chmod -R 755 ./node_modules/.bin/cypress
+    # 6. Fix permissions for Cypress binary and parent directories
+    - name: Fix permissions for Cypress binary
+      run: chmod +x ./node_modules/.bin/cypress
+    - name: Fix permissions recursively for node_modules
+      run: chmod -R 755 ./node_modules
 
-    # Step 7: Run Cypress tests
+    # 7. Run Cypress tests
     - name: Run Cypress tests
       run: npx cypress run --browser chrome
 
-    # Step 8: Upload test artifacts
+    # 8. Upload Cypress test artifacts
     - name: Upload Cypress test artifacts
       uses: actions/upload-artifact@v3
       with:
@@ -60,7 +62,7 @@ jobs:
           cypress/videos
           cypress/screenshots
 
-    # Step 9: Send success email
+    # 9. Send success email
     - name: Send success email
       if: success()
       run: |
@@ -70,7 +72,7 @@ jobs:
         EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
         EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
 
-    # Step 10: Send failure email
+    # 10. Send failure email
     - name: Send failure email
       if: failure()
       run: |
@@ -79,4 +81,3 @@ jobs:
         EMAIL_USER: ${{ secrets.EMAIL_USER }}
         EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
         EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
-
