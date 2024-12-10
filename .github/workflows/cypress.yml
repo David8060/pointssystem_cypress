@@ -8,36 +8,50 @@ on:
     branches:
       - main  # Trigger on pull requests to 'master'
   schedule:
-    - cron: '*/10 * * * *'  # Run every day at 9:00 AM UTC
+      - cron: '*/10 * * * *'  # Run every day at 9:00 AM UTC
 
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Checkout the code
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # Step 2: Set up Node.js
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 16
 
+    # Step 3: Install dependencies
     - name: Install dependencies
       run: npm install
-      working-directory: ./  # Ensure this points to the correct directory
 
+    # Step 4: Cache Cypress binary to avoid re-downloading it
+    - name: Cache Cypress binary
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/Cypress
+        key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-cypress-
+
+    # Step 5: Install Cypress
     - name: Cypress install
       run: npx cypress install
 
+    # Step 6: Fix permissions for Cypress binary
     - name: Fix permissions for Cypress
       run: chmod -R 755 ./node_modules/.bin/cypress
 
+    # Step 7: Run Cypress tests
     - name: Run Cypress tests
       run: npx cypress run --browser chrome
-      working-directory: ./  # Ensure this points to the correct directory
 
-    # Upload the test artifacts (videos and screenshots) as GitHub Actions artifacts
+    # Step 8: Upload test artifacts
     - name: Upload Cypress test artifacts
       uses: actions/upload-artifact@v3
       with:
@@ -46,7 +60,7 @@ jobs:
           cypress/videos
           cypress/screenshots
 
-
+    # Step 9: Send success email
     - name: Send success email
       if: success()
       run: |
@@ -56,7 +70,7 @@ jobs:
         EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
         EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
 
-    # 6. Send failure notification via email
+    # Step 10: Send failure email
     - name: Send failure email
       if: failure()
       run: |
