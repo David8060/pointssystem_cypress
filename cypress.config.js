@@ -6,8 +6,8 @@ module.exports = defineConfig({
       // implement node event listeners here
     },
     // Increase timeouts
-    defaultCommandTimeout: 1900000, // Set timeout for commands (in milliseconds)
-    pageLoadTimeout: 2000000, // Set timeout for full page loads (in milliseconds)
+    defaultCommandTimeout: 600, // Set timeout for commands (in milliseconds)
+    pageLoadTimeout: 800, // Set timeout for full page loads (in milliseconds)
     video: false, 
   },
 });
