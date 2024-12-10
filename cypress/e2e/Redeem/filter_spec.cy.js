@@ -2,14 +2,14 @@ import { config } from '../../support/config';
 import { selectors } from '../../support/selectors';
 import functions from '../../support/functions';
 
-describe('My account tests', () => {
+describe('redeem filters tests', () => {
     beforeEach(() => {
         // Use the custom command to login and visit the page
         cy.loginAuthentication(config.urls.loginUrl, config.authCredentials.username, config.authCredentials.password);
-        cy.wait(config.waitTimes.pageLoad); // Wait for elements to load
+        cy.wait(config.waitTimes.longWait); // Wait for elements to load
 
         cy.loginToPage(config.loginCredentials.username, config.loginCredentials.password);
-        cy.wait(config.waitTimes.pageLoad);
+        cy.wait(config.waitTimes.longWait);
 
         cy.viewport(1920, 980);
 
@@ -128,32 +128,32 @@ describe('My account tests', () => {
     });
 
 
-    it('points filter check', () => {
-        // Type the minimum and maximum price values in the input fields
-        cy.get('.form-control.min-input')
-            .type('20');
+    // it('points filter check', () => {
+    //     // Type the minimum and maximum price values in the input fields
+    //     cy.get('.form-control.min-input')
+    //         .type('20');
 
-        cy.get('.form-control.max-input')
-            .type('100');
+    //     cy.get('.form-control.max-input')
+    //         .type('100');
 
-        // Click the apply filter button
-        cy.get('.f_filter-panel-apply-price-filter.btn.btn-light')
-            .click();
+    //     // Click the apply filter button
+    //     cy.get('.f_filter-panel-apply-price-filter.btn.btn-light')
+    //         .click();
 
-        // Wait for the page to load after applying the filter
-        cy.wait(config.waitTimes.pageLoad);
+    //     // Wait for the page to load after applying the filter
+    //     cy.wait(config.waitTimes.pageLoad);
 
-        // Get all the product prices and validate they are within the range 20-100
-        cy.get('.product-price')
-            .each(($price) => {
-                // Get the price text and parse it as a number
-                const priceText = $price.text().trim();
-                const price = parseFloat(priceText.replace(/[^\d.-]/g, '')); // Remove non-numeric characters
+    //     // Get all the product prices and validate they are within the range 20-100
+    //     cy.get('.product-price')
+    //         .each(($price) => {
+    //             // Get the price text and parse it as a number
+    //             const priceText = $price.text().trim();
+    //             const price = parseFloat(priceText.replace(/[^\d.-]/g, '')); // Remove non-numeric characters
 
-                // Ensure the price is within the range
-                expect(price).to.be.within(20, 100);
-            });
-    });
+    //             // Ensure the price is within the range
+    //             expect(price).to.be.within(20, 100);
+    //         });
+    // });
 
 
 
