@@ -40,3 +40,23 @@ jobs:
           cypress/videos
           cypress/screenshots
 
+
+    - name: Send success email
+      if: success()
+      run: |
+        node notify.js success
+      env:
+        EMAIL_USER: ${{ secrets.EMAIL_USER }}
+        EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+        EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
+
+    # 6. Send failure notification via email
+    - name: Send failure email
+      if: failure()
+      run: |
+        node notify.js failure
+      env:
+        EMAIL_USER: ${{ secrets.EMAIL_USER }}
+        EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+        EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
+
