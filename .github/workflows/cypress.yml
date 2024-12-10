@@ -3,10 +3,10 @@ name: Run Cypress Tests
 on:
   push:
     branches:
-      - master  # Trigger on push to 'master'
+      - main  # Trigger on push to 'master'
   pull_request:
     branches:
-      - master  # Trigger on pull requests to 'master'
+      - main  # Trigger on pull requests to 'master'
   schedule:
     - cron: '*/10 * * * *'  # Run every day at 9:00 AM UTC
 
