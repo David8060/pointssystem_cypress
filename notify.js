@@ -14,10 +14,10 @@ const sendEmail = async (status) => {
   const mailOptions = {
     from: process.env.EMAIL_USER, // Sender email
     to: process.env.EMAIL_RECIPIENT, // Recipient email
-    subject: status === 'success' ? '✅ Cypress Tests Passed' : '❌ Cypress Tests Failed',
+    subject: status === 'success' ? '✅ Points System Cypress Tests Passed' : '❌ Points System Cypress Tests Failed',
     text: status === 'success' 
-      ? 'The Cypress tests have completed successfully.' 
-      : 'The Cypress tests have failed. Please check the logs.',
+      ? 'Points System Cypress tests have completed successfully.' 
+      : 'Points System Cypress tests have failed. Please check the logs.',
   };
 
   try {
