@@ -27,6 +27,9 @@ jobs:
       run: npm install
       working-directory: ./  # Ensure this points to the correct directory
 
+    - name: Cypress install
+      run: npx cypress install
+
     - name: Fix permissions for Cypress
       run: chmod -R 755 ./node_modules/.bin/cypress
 
