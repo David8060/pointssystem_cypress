@@ -7,10 +7,10 @@
     "test": "cypress open",
     "test:headless": "cypress run"
   },
-  "dependencies": {},
   "devDependencies": {
-    "cypress": "^12.10.0",
-    "cypress-shadow-dom": "1.4.1" 
+    "cypress": "^12.17.4",
+    "cypress-shadow-dom": "1.4.1",
+    "nodemailer": "^6.9.16"
   },
   "author": "",
   "license": "ISC"
