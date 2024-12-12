@@ -33,11 +33,11 @@ describe('Navigations from Points System User Feed', () => {
 
         cy.url().should('include', postsUrl);
 
-        // functions.getSingleShadowElement(selectors.shadowElement.shadowListPosts, '.btn.redeem')
-        //     .should('be.visible')
-        //     .click();
+        functions.getSingleShadowElement(selectors.shadowElement.shadowListPosts, '.btn.redeem')
+            .should('be.visible')
+            .click();
 
-        // cy.url().should('not.include', postsUrl);
+        cy.url().should('not.include', postsUrl);
 
         cy.get('.header-link')
             .eq(0)
@@ -45,11 +45,11 @@ describe('Navigations from Points System User Feed', () => {
 
         cy.wait(config.waitTimes.pageLoad);
 
-        // functions.getSingleShadowElement(selectors.shadowElement.shadowListPosts, '.ad-info')
-        //     .eq(0)
-        //     .click();
+        functions.getSingleShadowElement(selectors.shadowElement.shadowListPosts, '.ad-info')
+            .eq(0)
+            .click();
 
-        // cy.url().should('not.include', postsUrl);
+        cy.url().should('not.include', postsUrl);
 
         cy.get('.header-link-wrapper')
             .eq(0)
