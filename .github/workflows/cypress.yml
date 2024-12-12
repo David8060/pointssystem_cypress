@@ -57,12 +57,13 @@ jobs:
 
     # 9. Upload Cypress test artifacts
     - name: Upload Cypress test artifacts
+      if: always() # Ensure the step always runs
       uses: actions/upload-artifact@v3
       with:
         name: cypress-artifacts
         path: |
-          cypress/videos
-          cypress/screenshots
+         cypress/videos
+         cypress/screenshots
 
     # 10. Send success email
     - name: Send success email
