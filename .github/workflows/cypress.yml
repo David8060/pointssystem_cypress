@@ -43,7 +43,7 @@ jobs:
       run: chmod -R 755 cypress
 
     - name: Test connectivity
-      run: curl -I https://your-shopware-url.com
+      run: curl -I https://pointssystemshop.armdev.am/
       
     # 5. Ensure permissions are correct for Cypress binary before installation
     - name: Fix permissions on Cypress binary
