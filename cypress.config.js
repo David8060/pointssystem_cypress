@@ -9,5 +9,6 @@ module.exports = defineConfig({
     defaultCommandTimeout: 250000, // Set timeout for commands (in milliseconds)
     pageLoadTimeout: 250000, // Set timeout for full page loads (in milliseconds)
     video: false, 
+    screenshotOnRunFailure: true,
   },
 });
