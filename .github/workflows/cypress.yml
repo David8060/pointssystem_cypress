@@ -39,6 +39,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-cypress-
 
+    - name: Fix folder permissions
+      run: chmod -R 755 cypress
+      
     # 5. Ensure permissions are correct for Cypress binary before installation
     - name: Fix permissions on Cypress binary
       run: chmod -R 755 ./node_modules/.bin
