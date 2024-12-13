@@ -128,6 +128,32 @@ describe('redeem filters tests', () => {
     });
 
 
+
+
+    it('check item home part navigations', () => {
+
+             cy.get('.product-image-link')
+                .first()
+                .click();
+
+        // Validate that URL doesn't include '/Products'
+        cy.url().should('not.include', '/Products');
+    
+        // Navigate to home link
+        cy.get('.breadcrumb-link.home-link')
+            .first()
+            .click();
+    
+        // Click through product links and validate each breadcrumb step
+        for (let i = 0; i <= 2; i++) {
+            cy.get('.product-image-link')
+                .first()
+                .click();
+            checkBreadcrumbAndUrl(i);
+        }
+    });
+
+
     // it('points filter check', () => {
     //     // Type the minimum and maximum price values in the input fields
     //     cy.get('.form-control.min-input')
