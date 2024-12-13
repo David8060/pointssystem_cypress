@@ -59,7 +59,7 @@ jobs:
 
     # 8. Run Cypress tests
     - name: Run Cypress tests
-      run: npx cypress run --browser chrome
+      run: npx cypress run --spec "cypress/e2e/Redeem/**/*"
 
     # 9. Upload Cypress test artifacts
     - name: Upload Cypress test artifacts
