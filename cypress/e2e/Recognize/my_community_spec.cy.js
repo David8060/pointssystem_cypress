@@ -99,9 +99,3 @@ describe('Recognize home page tests', () => {
     });
 
 });
-
-Cypress.on('uncaught:exception', (err, runnable) => {
-    if (err.message.includes("Unexpected token '<'")) {
-        return false; // prevents Cypress from failing the test
-    }
-});

@@ -398,8 +398,3 @@ function writeComment(commentText) {
         .type(commentText)
         .type('{enter}');
 }
-
-// Prevent Cypress from failing the test on uncaught exceptions
-Cypress.on('uncaught:exception', (err, runnable) => {
-    return false;
-});

@@ -177,10 +177,6 @@ describe('interactions with product and shopping bag', () => {
 
     });
 
-
-
-
-
 });
 
 

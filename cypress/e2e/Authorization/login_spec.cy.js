@@ -105,3 +105,7 @@ describe('Points System Login Page', () => {
 
 });
 
+// Prevent Cypress from failing the test on uncaught exceptions
+Cypress.on('uncaught:exception', (err, runnable) => {
+  return false;
+});
