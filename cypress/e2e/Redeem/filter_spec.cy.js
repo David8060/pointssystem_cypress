@@ -184,3 +184,26 @@ describe('redeem filters tests', () => {
 
 
 });
+
+// Helper function to handle breadcrumb click and URL validation
+function checkBreadcrumbAndUrl(index) {
+    cy.get('.breadcrumb-title')
+        .eq(index)  // Get the breadcrumb element based on index
+        .invoke('text')
+        .then((text) => {
+            const formattedText = text.trim()                     // Trim any leading/trailing spaces
+                .replace(/\s+/g, '-')                             // Replace spaces with hyphens
+                .replace(/_/g, '-')                               // Replace underscores with hyphens
+                .replace(/\//g, '-');                             // Replace slashes with hyphens
+
+            cy.log(formattedText);  // Log the formatted text for debugging
+
+            // Click on the breadcrumb title
+            cy.get('.breadcrumb-title')
+                .eq(index)  // Get the same breadcrumb element again (to click)
+                .click();
+
+            // Assert that the URL includes the formatted text
+            cy.url().should('include', formattedText);
+        });
+}
