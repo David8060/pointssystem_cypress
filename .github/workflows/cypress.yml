@@ -59,7 +59,7 @@ jobs:
 
     # 8. Run Cypress tests
     - name: Run Cypress tests
-      run: npx cypress run
+      run: npx cypress run --browser chrome
 
     # 9. Upload Cypress test artifacts
     - name: Upload Cypress test artifacts
