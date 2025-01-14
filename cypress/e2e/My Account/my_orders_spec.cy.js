@@ -18,8 +18,8 @@ describe('My account tests', () => {
 
     it('navigate to my account and check My Orders', () => {
         // Navigate to profile info
-        functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.profile-image')
-            .eq(5)
+        functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.profile-info')
+            .find(selectors.myAccount.profileImage)
             .trigger('mouseover');
 
         functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, selectors.myAccount.container)
@@ -37,12 +37,17 @@ describe('My account tests', () => {
         cy.wait(config.waitTimes.pageLoad);
         cy.url().should('include', '/user-orders');
 
-        // Check if "You don't have orders yet" is visible
-        functions.getDoubleShadowElement(selectors.shadowElement.shadowUserAccount, selectors.shadowElement.shadowUserOrders, '.text.medium.medium1') // Assuming this is the selector for the "No orders" message
-            .then($noOrdersMessage => {
-                if ($noOrdersMessage.is(':visible')) {
-                    // If the message is visible, skip the actions
-                    cy.log("No orders found. Skipping further actions.");
+        cy.get(selectors.shadowElement.shadowUserAccount)
+            .shadow()
+            .find(selectors.shadowElement.shadowUserOrders)
+            .shadow()
+            .then(($shadowRoot) => {
+                // Check if .empty-data exists in the shadow DOM
+                const emptyDataExists = $shadowRoot.find('.empty-data').length > 0;
+
+                if (emptyDataExists) {
+                    // If .empty-data exists, it means no data is available
+                    cy.log("No data available. Skipping verification.");
                 } else {
                     // If there are orders, perform the listed actions
 
@@ -51,7 +56,7 @@ describe('My account tests', () => {
                         .eq(0)
                         .click();
 
-                    // Check product header
+                    // Check product header is visible and contains 'Product'
                     functions.getDoubleShadowElement(selectors.shadowElement.shadowUserAccount, selectors.shadowElement.shadowUserOrders, selectors.myAccount.orderHeaderName)
                         .contains('Product');
 
@@ -66,6 +71,8 @@ describe('My account tests', () => {
                         .should('not.be.visible');
                 }
             });
+
+
 
     });
 });

@@ -58,6 +58,15 @@ describe('My account tests', () => {
 
         cy.wait(config.waitTimes.mediumWait);
 
+        functions.getDoubleShadowElement(selectors.shadowElement.shadowUserAccount, selectors.shadowElement.shadowUserSettings, '.address-item')
+            .should('contain', 'Your First Name Your Last Name')  // Assert it contains 'Davit Vardapetyan'
+            .and('contain', 'Leningradyan')
+            .and('contain', 'Yerevan')
+            .and('contain', 'Germany')
+            .and('contain', 'no zip code')
+            .and('contain', '44/4')
+            .and('contain', '2 street');
+
         // Validate incremented count
         cy.get('@initialCount').then(initialCount => {
 
@@ -71,10 +80,10 @@ describe('My account tests', () => {
         fillAddress(
             'Davit',
             'Vardapetyan',
-            '',
+            'nnn',
             'Patriki',
-            '',
-            '',
+            'tt',
+            'kk',
             'Moscow',
         );
 
@@ -83,6 +92,15 @@ describe('My account tests', () => {
             .click();
 
         cy.wait(config.waitTimes.pageLoad);
+
+        functions.getDoubleShadowElement(selectors.shadowElement.shadowUserAccount, selectors.shadowElement.shadowUserSettings, '.address-item')
+            .should('contain', 'Davit Vardapetyan')  // Assert it contains 'Davit Vardapetyan'
+            .and('contain', 'Moscow')
+            .and('contain', 'nnn')
+            .and('contain', 'tt')
+            .and('contain', 'kk')
+            .and('contain', 'Patriki');
+
 
         deleteButton(4); // Delete button
 
@@ -99,6 +117,80 @@ describe('My account tests', () => {
                 .should('have.length', addressCount - 1);
             addressCount -= 1; // Update count
         });
+
+    });
+
+    it('check default address', () => {
+
+        const uniqueVariable = `employee-${Date.now()}`;
+
+        openAddressMenu();
+
+        fillAddress(
+            uniqueVariable,
+            'Your Last Name',
+            'Leningradyan',
+            '44/4',
+            '2 street',
+            'no zip code',
+            'Yerevan',
+            'Germany',
+            '9999991',
+        );
+
+        functions.getSingleShadowElement(selectors.shadowElement.shadowAddedItAddress, '#isDefaultShippingAddress247')
+            .click();
+
+        functions.getSingleShadowElement(selectors.shadowElement.shadowAddedItAddress, selectors.myAccount.userSettings.primaryButton)
+            .click();
+
+        cy.wait(config.waitTimes.pageLoad);
+
+        functions.getDoubleShadowElement(selectors.shadowElement.shadowUserAccount, selectors.shadowElement.shadowUserSettings, '.address-item')
+            .first()
+            .should('contain', uniqueVariable);
+
+        deleteButton(2);
+
+        functions.getSingleShadowElement(selectors.shadowElement.shadowPopup, '.popup-container.popup-accepted')
+            .should('be.visible');
+
+        functions.getSingleShadowElement(selectors.shadowElement.shadowPopup, '.btn.primary-btn.btn-primary')
+            .click();
+
+        functions.getSingleShadowElement(selectors.shadowElement.shadowPopup, '.popup-container.popup-accepted')
+            .should('contain.text', 'The address cannot be deleted as it is set as the default shipping address.');
+
+
+        functions.getSingleShadowElement(selectors.shadowElement.shadowPopup, '#f_primary-btn')
+            .click();
+
+        cy.wait(config.waitTimes.pageLoad);
+
+        cy.get(selectors.shadowElement.shadowPopup)
+            .should('not.exist');
+
+        //deleting addresses
+        functions.getDoubleShadowElement(selectors.shadowElement.shadowUserAccount, selectors.shadowElement.shadowUserSettings, '.address-item')
+            .then((items) => {
+                let addressCount = items.length; // Get the count of address items
+
+                    // Iterate through each address and delete them
+                    for (let i = 2; i <= addressCount; i++) {
+                        deleteButton(4); // Call deleteButton with the calculated index
+
+                        // Confirm the deletion in the popup
+                        functions.getSingleShadowElement(selectors.shadowElement.shadowPopup, '.btn.primary-btn.btn-primary')
+                            .click();
+
+                        cy.wait(config.waitTimes.pageLoad);
+
+                    }
+                
+
+            });
+
+
     });
 
 
@@ -151,15 +243,20 @@ describe('My account tests', () => {
 
     });
 
-
-
 });
+
+
+
+
+
+
+
 
 // Function to navigate to My Account
 const navigateToMyAccount = () => {
 
-    functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.profile-image')
-        .eq(5)
+    functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.profile-info')
+        .find(selectors.myAccount.profileImage)
         .trigger('mouseover');
 
 

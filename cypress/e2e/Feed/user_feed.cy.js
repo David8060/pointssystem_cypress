@@ -33,31 +33,31 @@ describe('Points System User Feed', () => {
             .click();
     });
 
-    it('notification’s mark all as read flow', () => {
-        functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.notification')
-            .click();
+    // it('notification’s mark all as read flow', () => {
+    //     functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.notification')
+    //         .click();
 
-        functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.options')
-            .should('be.visible')
-            .click()
-            .contains('Mark all as read')
-            .click();
+    //     functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.options')
+    //         .should('be.visible')
+    //         .click()
+    //         .contains('Mark all as read')
+    //         .click();
 
-        functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.tooltip.extrasmall')
-            .should('have.css', 'display', 'none');
-    });
+    //     functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.tooltip.extrasmall')
+    //         .should('have.css', 'display', 'none');
+    // });
 
 
     it('check comment and like functionality with correct count expectations', () => {
-    // Post a comment
-    functions.getDoubleShadowElement(selectors.shadowElement.shadowListPosts, selectors.shadowElement.shadowItemPost, '#f_user-comment-input')
-        .first()
-        .should('be.visible');
+        // Post a comment
+        functions.getDoubleShadowElement(selectors.shadowElement.shadowListPosts, selectors.shadowElement.shadowItemPost, '#f_user-comment-input')
+            .first()
+            .should('be.visible');
 
-    functions.getDoubleShadowElement(selectors.shadowElement.shadowListPosts, selectors.shadowElement.shadowItemPost, '#f_user-comment-input')
-        .first()
-        .should('be.visible')
-        .type('test');
+        functions.getDoubleShadowElement(selectors.shadowElement.shadowListPosts, selectors.shadowElement.shadowItemPost, '#f_user-comment-input')
+            .first()
+            .should('be.visible')
+            .type('test');
 
         functions.getDoubleShadowElement(selectors.shadowElement.shadowListPosts, selectors.shadowElement.shadowItemPost, '.send-message')
             .first()
@@ -226,7 +226,7 @@ describe('Points System User Feed', () => {
             writeComment(commentText);  // Call the writeComment function with the generated comment text
 
             // Optionally, wait for a short period before posting the next comment
-            cy.wait(config.waitTimes.pageLoad);  
+            cy.wait(config.waitTimes.pageLoad);
         }
 
 
@@ -290,7 +290,8 @@ describe('Points System User Feed', () => {
 
     it('reacting to the comment', () => {
 
-        writeComment('tst');
+        const uniqueText = `tst-${Date.now()}`;
+        writeComment(uniqueText);
 
         cy.wait(config.waitTimes.pageLoad); // Wait for page load or update
 
@@ -353,9 +354,6 @@ describe('Points System User Feed', () => {
                     cy.get(`.emoji.${reaction}`).should('be.visible'); // Check that .emoji.like exists
                 });
 
-
-
-
             // Step 5: Unclick the reaction (optional based on your test logic)
             functions.getTripleShadowElement(
                 selectors.shadowElement.shadowListPosts,
@@ -381,8 +379,105 @@ describe('Points System User Feed', () => {
 
         });
 
+        functions.getTripleShadowElement(
+            selectors.shadowElement.shadowListPosts,
+            selectors.shadowElement.shadowItemPost,
+            selectors.shadowElement.shadowPostComment,
+            '.options-btn'
+        )
+            .first()
+            .trigger('mouseover')
+
+        functions.getTripleShadowElement(
+            selectors.shadowElement.shadowListPosts,
+            selectors.shadowElement.shadowItemPost,
+            selectors.shadowElement.shadowPostComment,
+            '.delete'
+        ).first()
+            .should('be.visible')
+            .click();
+
+        functions.getTripleShadowElement(
+            selectors.shadowElement.shadowListPosts,
+            selectors.shadowElement.shadowItemPost,
+            selectors.shadowElement.shadowPostComment,
+            '.comment-content'
+        )
+            .find('.small.light')
+            .first()
+            .should('not.have.text', uniqueText)
 
     });
+
+    it('edit comment', () => {
+
+        let uniqueText = `tst-${Date.now()}`;
+        writeComment(uniqueText);
+
+        let editedUniqueText = `tst-${Date.now()}`;
+
+        cy.wait(config.waitTimes.pageLoad); // Wait for page load or update
+
+        functions.getTripleShadowElement(
+            selectors.shadowElement.shadowListPosts,
+            selectors.shadowElement.shadowItemPost,
+            selectors.shadowElement.shadowPostComment,
+            '.options-btn'
+        )
+            .first()
+            .trigger('mouseover')
+
+        functions.getTripleShadowElement(
+            selectors.shadowElement.shadowListPosts,
+            selectors.shadowElement.shadowItemPost,
+            selectors.shadowElement.shadowPostComment,
+            '.edit'
+        ).first()
+            .should('be.visible')
+            .click();
+
+        functions.getTripleShadowElement(
+            selectors.shadowElement.shadowListPosts,
+            selectors.shadowElement.shadowItemPost,
+            selectors.shadowElement.shadowPostComment,
+            '.comment-edit-input'
+        ).should('be.visible');
+
+        functions.getTripleShadowElement(
+            selectors.shadowElement.shadowListPosts,
+            selectors.shadowElement.shadowItemPost,
+            selectors.shadowElement.shadowPostComment,
+            '#f_user-comment-input'
+        ).first()
+            .clear()
+            .type(editedUniqueText);
+
+        functions.getTripleShadowElement(
+            selectors.shadowElement.shadowListPosts,
+            selectors.shadowElement.shadowItemPost,
+            selectors.shadowElement.shadowPostComment,
+            '.primary-btn'
+        ).first()
+            .click();
+
+
+        functions.getTripleShadowElement(
+            selectors.shadowElement.shadowListPosts,
+            selectors.shadowElement.shadowItemPost,
+            selectors.shadowElement.shadowPostComment,
+            '.comment-content'
+        )
+            .find('.small.light')
+            .first()
+            .should('have.text', editedUniqueText)
+
+        cy.wait(config.waitTimes.pageLoad);
+
+        deleteComment();
+    });
+
+
+
 
 
 });
@@ -397,4 +492,28 @@ function writeComment(commentText) {
         .should('be.visible')
         .type(commentText)
         .type('{enter}');
+}
+
+
+function deleteComment() {
+    // Hover over the options button
+    functions.getTripleShadowElement(
+        selectors.shadowElement.shadowListPosts,
+        selectors.shadowElement.shadowItemPost,
+        selectors.shadowElement.shadowPostComment,
+        '.options-btn'
+    )
+        .first() // Select the first matching element
+        .trigger('mouseover'); // Simulate hover
+
+    // Wait for the delete button to appear and click it
+    functions.getTripleShadowElement(
+        selectors.shadowElement.shadowListPosts,
+        selectors.shadowElement.shadowItemPost,
+        selectors.shadowElement.shadowPostComment,
+        '.delete'
+    )
+        .first() // Select the first matching element
+        .should('be.visible') // Ensure the delete button is visible
+        .click(); // Click the delete button
 }

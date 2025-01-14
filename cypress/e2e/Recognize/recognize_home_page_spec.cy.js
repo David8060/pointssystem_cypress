@@ -28,7 +28,7 @@ describe('Recognize home page tests', () => {
     it('reset check', () => {
 
         // Search for the employee
-        typeInEmployeeSearch('user test');
+        typeInEmployeeSearch('a');
 
         cy.wait(config.waitTimes.pageLoad);
 
@@ -55,6 +55,9 @@ describe('Recognize home page tests', () => {
 
 
     it('home part interactions', () => {
+
+        const filterName = 'f';
+
         // Initial check to ensure the element starts at 0 degrees
         functions.getSingleShadowElement(selectors.shadowElement.shadowEmployeesList, '#f_employees-list')
             .should('have.attr', 'style', 'transform: rotate(0deg);');
@@ -66,23 +69,21 @@ describe('Recognize home page tests', () => {
         functions.rotateEmployeeList(0, 'up'); // Expect the element to rotate back to -36 degrees
 
         // Search for the employee
-        typeInEmployeeSearch('user test');
+        typeInEmployeeSearch(filterName);
 
         cy.wait(config.waitTimes.pageLoad);
 
-        // Check that the employee with the name "user test" is visible
+        // Check that the employee with the name "a" is visible
         functions.getDoubleShadowElement(selectors.shadowElement.shadowEmployeesList, selectors.shadowElement.shadowEmployee, '.employee-data.bold.small')
-            .filter(':contains("user")')
+            .filter(`:contains(${filterName})`)
             .should('be.visible');
     });
-
-
 
 
     it('send award flow', () => {
 
         // Search for the employee
-        typeInEmployeeSearch('user test');
+        typeInEmployeeSearch('a');
 
         cy.wait(config.waitTimes.pageLoad);
 
@@ -106,6 +107,7 @@ describe('Recognize home page tests', () => {
 
 
         functions.getDoubleShadowElement(selectors.shadowElement.shadowEmployeesList, selectors.shadowElement.shadowEmployee, '.border-outer')
+            .first()
             .click();
 
         // Now check that the original element is not visible
@@ -113,9 +115,10 @@ describe('Recognize home page tests', () => {
             .should('be.visible') // Assert that it is not visible
             .click();
 
+        cy.wait(config.waitTimes.pageLoad);
+
         functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowSendReward, '.send-reward')
             .should('be.visible');
-
 
         // Get all the `.wrapper` elements within `ngs-loads-stepper-sendreward`
         functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowSendReward, '.wrapper')
@@ -210,110 +213,117 @@ describe('Recognize home page tests', () => {
             .eq(0)
             .click();
 
-        cy.document().then((doc) => {
-            const errorElement = doc.querySelector(selectors.shadowElement.shadowMainStepper + ' .error-msg');
+        cy.get(selectors.shadowElement.shadowMainStepper)
+            .shadow()
+            .then(($shadowRoot) => {
+                const errorElement = $shadowRoot.find('.error-msg');
 
-            if (errorElement) {
-                // Check if the error message is visible
-                cy.log("Error message exists, checking visibility.");
-                cy.wrap(errorElement).should('be.visible').then(($errorMsg) => {
-                    if ($errorMsg.is(':visible')) {
-                        // If the error message is visible, close the modal
-                        cy.log("Error message is visible, closing the modal.");
+                if (errorElement.length > 0) {
+                    // Check if the error message is visible
+                    cy.log("Error message exists, checking visibility.");
+                    cy.wrap(errorElement).should('be.visible').then(($errorMsg) => {
+                        if ($errorMsg.is(':visible')) {
+                            // If the error message is visible, close the modal
+                            cy.log("Error message is visible, closing the modal.");
 
-                        functions.getSingleShadowElement(selectors.shadowElement.shadowStepper, '.header-close')
-                            .click();
+                            functions.getSingleShadowElement(selectors.shadowElement.shadowStepper, '.btn')
+                                .should('be.disabled');
 
-                        cy.get(selectors.shadowElement.shadowStepper)
-                            .should('not.exist');
-                    }
-                });
-            } else {
-                // If the error message does not exist, proceed with the steps
-                cy.log("Error message does not exist, proceeding with the steps.");
+                            functions.getSingleShadowElement(selectors.shadowElement.shadowStepper, '.header-close')
+                                .click();
 
-                functions.getSingleShadowElement(selectors.shadowElement.shadowStepper, '.btn.active')
-                    .click();
+                            cy.wait(config.waitTimes.pageLoad);
 
-                functions.getSingleShadowElement(selectors.shadowElement.shadowStepper, '.btn')
-                    .eq(1)
-                    .should('be.disabled');
-
-                let noteText = 'happy new year';
-
-                functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, '#tiny-editor_ifr')
-                    .should('be.visible')
-                    .then(($iframe) => {
-                        const body = $iframe[0].contentDocument.body;
-                        cy.wrap(body).focus().type(noteText);
+                            cy.get(selectors.shadowElement.shadowStepper)
+                                .should('not.exist');
+                        }
                     });
+                } else {
+                    // If the error message does not exist, proceed with the steps
+                    cy.log("Error message does not exist, proceeding with the steps.");
 
-                functions.getSingleShadowElement(selectors.shadowElement.shadowStepper, '.btn')
-                    .eq(1)
-                    .should('be.enabled');
+                    functions.getSingleShadowElement(selectors.shadowElement.shadowStepper, '.btn.active')
+                        .click();
 
-                functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, 'button.tox-tbtn[aria-label="Insert Background"]')
-                    .should('exist')
-                    .click();
+                    functions.getSingleShadowElement(selectors.shadowElement.shadowStepper, '.btn')
+                        .eq(1)
+                        .should('be.disabled');
 
-                functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, 'div.select-bg')
-                    .eq(12)
-                    .should('be.visible')
-                    .click();
+                    let noteText = 'test';
 
-                const backgroundColor = 'rgb(255, 160, 122)';
+                    functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, '#tiny-editor_ifr')
+                        .should('be.visible')
+                        .then(($iframe) => {
+                            const body = $iframe[0].contentDocument.body;
+                            cy.wrap(body).focus().type(noteText);
+                        });
 
-                functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, '#tiny-editor_ifr')
-                    .then(($iframe) => {
-                        const body = $iframe[0].contentDocument.body;
-                        cy.wrap(body).should('have.css', 'background-color', backgroundColor);
-                    });
+                    functions.getSingleShadowElement(selectors.shadowElement.shadowStepper, '.btn')
+                        .eq(1)
+                        .should('be.enabled');
 
-                functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, '.select-bg.close-bg')
-                    .eq(0)
-                    .should('be.visible')
-                    .click();
+                    functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, 'button.tox-tbtn[aria-label="Insert Background"]')
+                        .should('exist')
+                        .click();
 
-                functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, '#f_color-picker')
-                    .should('not.be.visible');
+                    functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, 'div.select-bg')
+                        .eq(12)
+                        .should('be.visible')
+                        .click();
 
-                functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, '#datepicker')
-                    .should('be.visible')
-                    .click();
+                    const backgroundColor = 'rgb(255, 160, 122)';
 
-                cy.get('.flatpickr-day.today')
-                    .should('be.visible')
-                    .click();
+                    functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, '#tiny-editor_ifr')
+                        .then(($iframe) => {
+                            const body = $iframe[0].contentDocument.body;
+                            cy.wrap(body).should('have.css', 'background-color', backgroundColor);
+                        });
 
-                functions.getSingleShadowElement(selectors.shadowElement.shadowMainStepper, '.btn')
-                    .contains('Preview')
-                    .click();
+                    functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, '.select-bg.close-bg')
+                        .eq(0)
+                        .should('be.visible')
+                        .click();
 
-                functions.getTripleShadowElement(selectors.shadowElement.shadowMainStepper, selectors.shadowElement.shadowShowPost, selectors.shadowElement.shadowItemPost, '#f_text')
-                    .should('have.text', noteText);
+                    functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, '#f_color-picker')
+                        .should('not.be.visible');
 
-                functions.getTripleShadowElement(selectors.shadowElement.shadowMainStepper, selectors.shadowElement.shadowShowPost, selectors.shadowElement.shadowItemPost, '#f_text-container')
-                    .should('have.css', 'background-color', backgroundColor);
+                    functions.getDoubleShadowElement(selectors.shadowElement.shadowStepper, selectors.shadowElement.shadowcreatepost, '#datepicker')
+                        .should('be.visible')
+                        .click();
 
-                functions.getSingleShadowElement(selectors.shadowElement.shadowMainStepper, '.btn')
-                    .contains('Send Award Now')
-                    .click();
+                    cy.get('.flatpickr-day.today')
+                        .eq(1)
+                        .should('be.visible')
+                        .click();
 
-                cy.wait(config.waitTimes.pageLoad);
+                    functions.getSingleShadowElement(selectors.shadowElement.shadowMainStepper, '.btn')
+                        .contains('Preview')
+                        .click();
 
-                functions.getSingleShadowElement(selectors.shadowElement.shadowPopup, '.popup-container')
-                    .should('be.visible');
+                    functions.getTripleShadowElement(selectors.shadowElement.shadowMainStepper, selectors.shadowElement.shadowShowPost, selectors.shadowElement.shadowItemPost, '#f_text')
+                        .should('have.text', noteText);
 
-                functions.getSingleShadowElement(selectors.shadowElement.shadowPopup, '#f_primary-btn')
-                    .contains('Close')
-                    .click();
+                    functions.getTripleShadowElement(selectors.shadowElement.shadowMainStepper, selectors.shadowElement.shadowShowPost, selectors.shadowElement.shadowItemPost, '#f_text-container')
+                        .should('have.css', 'background-color', backgroundColor);
 
-                cy.get(selectors.shadowElement.shadowPopup)
-                    .should('not.exist');
+                    functions.getSingleShadowElement(selectors.shadowElement.shadowMainStepper, '.btn')
+                        .contains('Send Award Now')
+                        .click();
 
-            }
+                    cy.wait(config.waitTimes.pageLoad);
 
-        });
+                    functions.getSingleShadowElement(selectors.shadowElement.shadowPopup, '.popup-container')
+                        .should('be.visible');
+
+                    functions.getSingleShadowElement(selectors.shadowElement.shadowPopup, '#f_primary-btn')
+                        .contains('Close')
+                        .click();
+
+                    cy.get(selectors.shadowElement.shadowPopup)
+                        .should('not.exist');
+                }
+            });
+
 
 
     });

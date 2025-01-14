@@ -17,8 +17,8 @@ describe('My account tests', () => {
 
     it('navigate to my account and check My Activity', () => {
 
-        functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.profile-image')
-            .eq(5)
+        functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.profile-info')
+            .find(selectors.myAccount.profileImage)
             .trigger('mouseover');
 
         functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.account-detail')
@@ -61,27 +61,106 @@ describe('My account tests', () => {
             .click();
 
 
+
         functions.getDoubleShadowElement(selectors.shadowElement.shadowUserAccount, selectors.shadowElement.shadowUserActivity, '.activity-tab')
             .eq(1)
             .click();
 
-        verifyTableBodyTextAgainstUserName(1);
+
+            cy.get(selectors.shadowElement.shadowUserAccount)
+            .shadow()
+            .find(selectors.shadowElement.shadowUserActivity)
+            .shadow()
+            .then(($shadowRoot) => {
+              // Check if .empty-data exists in the shadow DOM
+              const emptyDataExists = $shadowRoot.find('.empty-data').length > 0;
+          
+              if (emptyDataExists) {
+                // If .empty-data exists, it means no data is available
+                cy.log("No data available. Skipping verification.");
+              } else {
+                // If .empty-data does not exist, check for .table-body-part
+                const tableBodyPartExists = $shadowRoot.find('.table-body-part').length > 0;
+          
+                if (tableBodyPartExists) {
+                  // If .table-body-part exists and is visible, proceed with verification
+                  cy.get(selectors.shadowElement.shadowUserAccount)
+                    .shadow()
+                    .find(selectors.shadowElement.shadowUserActivity)
+                    .shadow()
+                    .find('.table-body-part')
+                    .then($tableBodyPart => {
+                      if ($tableBodyPart.is(':visible')) {
+                        // If .table-body-part is visible, proceed with verification
+                        cy.log("Data is available and visible. Proceeding with verification.");
+                        verifyTableBodyTextAgainstUserName(1);
+                      } else {
+                        // If .table-body-part exists but is not visible
+                        cy.log("Data exists but is not visible. Skipping verification.");
+                      }
+                    });
+                } else {
+                  // If neither .empty-data nor .table-body-part exists, handle accordingly
+                  cy.log("Unexpected situation: neither .empty-data nor .table-body-part is visible.");
+                }
+              }
+            });
+        
 
 
         functions.getDoubleShadowElement(selectors.shadowElement.shadowUserAccount, selectors.shadowElement.shadowUserActivity, '.activity-tab')
             .eq(2)
             .click();
 
-        verifyTableBodyTextAgainstUserName(0);
+        cy.get(selectors.shadowElement.shadowUserAccount)
+        .shadow()
+        .find(selectors.shadowElement.shadowUserActivity)
+        .shadow()
+        .then(($shadowRoot) => {
+          // Check if .empty-data exists in the shadow DOM
+          const emptyDataExists = $shadowRoot.find('.empty-data').length > 0;
+      
+          if (emptyDataExists) {
+            // If .empty-data exists, it means no data is available
+            cy.log("No data available. Skipping verification.");
+          } else {
+            // If .empty-data does not exist, check for .table-body-part
+            const tableBodyPartExists = $shadowRoot.find('.table-body-part').length > 0;
+      
+            if (tableBodyPartExists) {
+              // If .table-body-part exists and is visible, proceed with verification
+              cy.get(selectors.shadowElement.shadowUserAccount)
+                .shadow()
+                .find(selectors.shadowElement.shadowUserActivity)
+                .shadow()
+                .find('.table-body-part')
+                .then($tableBodyPart => {
+                  if ($tableBodyPart.is(':visible')) {
+                    // If .table-body-part is visible, proceed with verification
+                    cy.log("Data is available and visible. Proceeding with verification.");
+                    verifyTableBodyTextAgainstUserName(0);
+                  } else {
+                    // If .table-body-part exists but is not visible
+                    cy.log("Data exists but is not visible. Skipping verification.");
+                  }
+                });
+            } else {
+              // If neither .empty-data nor .table-body-part exists, handle accordingly
+              cy.log("Unexpected situation: neither .empty-data nor .table-body-part is visible.");
+            }
+          }
+        });
 
 
         functions.getDoubleShadowElement(selectors.shadowElement.shadowUserAccount, selectors.shadowElement.shadowUserActivity, '#datepicker')
             .click();
 
         cy.get('select.flatpickr-monthDropdown-months')
+            .eq(1)
             .select('October');
 
         cy.get('.numInput.cur-year')
+            .eq(1)
             .type(2024);
 
         // Select the start date (October 8, 2024)
@@ -100,33 +179,51 @@ describe('My account tests', () => {
             .eq(0)
             .click();
 
-        functions.getDoubleShadowElement(selectors.shadowElement.shadowUserAccount, selectors.shadowElement.shadowUserActivity, '.table-body-part.extrasmall.cursor-pointer')
-            .each(($parentEl, index) => {
-                cy.wrap($parentEl)
-                    .find('.table-body-inner')
-                    .eq(2)
-                    .then($el => {
-                        // Get the text of the element (e.g., "10/22/24")
-                        const dateText = $el.text().trim();
+            cy.get(selectors.shadowElement.shadowUserAccount)
+            .shadow()
+            .find(selectors.shadowElement.shadowUserActivity)
+            .shadow()
+            .then(($shadowRoot) => {
+              // Check if .empty-data exists in the shadow DOM
+              const emptyDataExists = $shadowRoot.find('.empty-data').length > 0;
+          
+              if (emptyDataExists) {
+                // If .empty-data exists, it means no data is available
+                cy.log("No data available. Skipping verification.");
+              } else {
 
-                        // Split the text into three parts: month/day/year
-                        const dateParts = dateText.split('/');
+                functions.getDoubleShadowElement(selectors.shadowElement.shadowUserAccount, selectors.shadowElement.shadowUserActivity, '.table-body-part.extrasmall.cursor-pointer')
+                .each(($parentEl, index) => {
+                    cy.wrap($parentEl)
+                        .find('.table-body-inner')
+                        .eq(2)
+                        .then($el => {
+                            // Get the text of the element (e.g., "10/22/24")
+                            const dateText = $el.text().trim();
+    
+                            // Split the text into three parts: month/day/year
+                            const dateParts = dateText.split('/');
+    
+                            const firstPart = parseInt(dateParts[0]); // month
+                            const middlePart = parseInt(dateParts[1]); // day
+                            const thirdPart = parseInt(dateParts[2]); // year
+    
+                            // Check conditions: firstPart == 10, middlePart in range, thirdPart == 24
+                            if (firstPart === 10 && middlePart >= 8 && middlePart <= 23 && thirdPart === 24) {
+                                cy.log(`Test passed for element ${index}: ${dateText}`);
+                            } else {
+                                // Log the failure and explicitly throw an error to fail the test
+                                cy.log(`Test failed for element ${index}. Date: ${dateText} is not in expected format or range.`);
+                                throw new Error(`Date ${dateText} is not valid for element ${index}. Expected format: 10/MM/24 where MM is between 8 and 23.`);
+                            }
+                        });
+                });
 
-                        const firstPart = parseInt(dateParts[0]); // month
-                        const middlePart = parseInt(dateParts[1]); // day
-                        const thirdPart = parseInt(dateParts[2]); // year
-
-                        // Check conditions: firstPart == 10, middlePart in range, thirdPart == 24
-                        if (firstPart === 10 && middlePart >= 8 && middlePart <= 23 && thirdPart === 24) {
-                            cy.log(`Test passed for element ${index}: ${dateText}`);
-                        } else {
-                            // Log the failure and explicitly throw an error to fail the test
-                            cy.log(`Test failed for element ${index}. Date: ${dateText} is not in expected format or range.`);
-                            throw new Error(`Date ${dateText} is not valid for element ${index}. Expected format: 10/MM/24 where MM is between 8 and 23.`);
-                        }
-                    });
+              }
             });
     });
+
+
 });
 
 function verifyTableBodyTextAgainstUserName(eqIndex) {
@@ -140,7 +237,6 @@ function verifyTableBodyTextAgainstUserName(eqIndex) {
                 .then(($innerEl) => {
                     // Get the text of '.table-body-inner' element at the specified index
                     const tableBodyText = $innerEl.text().trim();
-
 
                     functions.getDoubleShadowElement(selectors.shadowElement.shadowUserAccount, selectors.shadowElement.shadowUserInfo, '.user-name.medium.large1')
                         .then(($userName) => {

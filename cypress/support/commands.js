@@ -63,6 +63,7 @@ Cypress.Commands.add('loginToPage', (username, password) => {
       .shadow()
       .find(selectors.login.emailInput)
       .type(username);
+
   
     cy.get(selectors.shadowElement.shadowlogin)
       .shadow()

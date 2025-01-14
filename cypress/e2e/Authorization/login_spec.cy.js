@@ -92,8 +92,8 @@ describe('Points System Login Page', () => {
 
     cy.url().should('include', '/posts');
 
-    functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, selectors.myAccount.profileImage)
-      .eq(5)
+    functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.profile-info')
+      .find(selectors.myAccount.profileImage)
       .trigger('mouseover');
 
     functions.getSingleShadowElement(selectors.shadowElement.shadowHeader, '.container-2')
@@ -105,7 +105,4 @@ describe('Points System Login Page', () => {
 
 });
 
-// Prevent Cypress from failing the test on uncaught exceptions
-Cypress.on('uncaught:exception', (err, runnable) => {
-  return false;
-});
+

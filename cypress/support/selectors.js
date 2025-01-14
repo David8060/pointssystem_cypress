@@ -70,7 +70,7 @@ export const selectors = {
             addressLine2Input: 'input[placeholder="Address Line 2"]',
             zipCodeInput: 'input[type="text"]:eq(4)',
             cityInput: 'input[type="text"]:eq(5)',
-            countrySelect: '#country',
+            countrySelect: '#country247',
             numberInput: 'input[type="number"]',
             defaultBillingCheckbox: 'label[for="isDefaultBillingAddress"]',
             defaultShippingCheckbox: 'label[for="isDefaultShippingAddress"]',

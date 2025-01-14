@@ -41,61 +41,81 @@ describe('Recognize home page tests', () => {
             .click();
 
 
-        functions.typeInEmployeeSearch('user test');
-
-        cy.wait(config.waitTimes.pageLoad);
-
-        // Check if the employee data is visible after the search
         functions.getDoubleShadowElement(selectors.shadowElement.shadowEmployeesList, selectors.shadowElement.shadowEmployee, '.employee-data.bold.small')
             .should('be.visible')
-            .within(() => {
-                // Confirm that the text 'user' and 'test' are visible
-                cy.contains('div', 'user').should('be.visible');
-                cy.contains('div', 'test').should('be.visible');
+            .first()
+            .invoke('text')
+            .then((employeeName) => {
+                cy.log('Employee Data:', employeeName);
+
+                functions.typeInEmployeeSearch(employeeName);
+
+                cy.wait(config.waitTimes.pageLoad);
+
+                // Check if the employee data is visible after the search
+                functions.getDoubleShadowElement(selectors.shadowElement.shadowEmployeesList, selectors.shadowElement.shadowEmployee, '.employee-data.bold.small')
+                    .should('be.visible')
+                    .first()
+                    .within(() => {
+                        // Confirm that the text 'user' and 'test' are visible
+                        cy.contains('div', employeeName).should('be.visible');
+
+                    });
+
+
+                // Rotate down by 36 degrees
+                functions.rotateEmployeeList(36, 'down');
+
+                // Rotate back up to 0 degrees
+                functions.rotateEmployeeList(0, 'up');;
+
+
+                functions.getDoubleShadowElement(selectors.shadowElement.shadowEmployeesList, selectors.shadowElement.shadowEmployee, '.border-outer')
+                    .eq(0)
+                    .click();
+
+                // After clicking, check that the total count text changes to '1'
+                functions.getSingleShadowElement(selectors.shadowElement.shadowEmployeesList, '.total-count')
+                    .should('be.visible') // Ensure the total count element is visible
+                    .invoke('text') // Get the text of the total count element
+                    .should('eq', '1'); // Assert that the text is '1'
+
+                functions.getDoubleShadowElement(selectors.shadowElement.shadowEmployeesList, selectors.shadowElement.shadowEmployee, '.employee-data.bold.small')
+                    .should('be.visible')
+                    .first()
+                    .invoke('text')
+                    .then((employeeName) => {
+                        // Dynamically select the element using the employee name and assert it is not visible
+                        functions.getDoubleShadowElement(selectors.shadowElement.shadowEmployeesList, selectors.shadowElement.shadowEmployee, `.employee-data.bold.small:contains("${employeeName}")`)
+                            .should('be.visible');
+                    });
+
+                functions.getSingleShadowElement(selectors.shadowElement.shadowEmployeesList, '.edit-btn.btn.save.medium1.cursor-pointer')
+                    .click();
+
+                cy.wait(config.waitTimes.pageLoad);
+
+                functions.getSingleShadowElement(selectors.shadowElement.shadowEmployeesList, '.members-edit-buttons')
+                    .should('be.visible')
+                    .click();
+
+                cy.wait(config.waitTimes.pageLoad);
+
+
+                functions.typeInEmployeeSearch(employeeName);
+
+
+                functions.getDoubleShadowElement(selectors.shadowElement.shadowEmployeesList, selectors.shadowElement.shadowEmployee, '.f_clickable.employee-content.cursor-pointer.selected-community')
+                    .should('be.visible')
+                    .click();
+
+                functions.getSingleShadowElement(selectors.shadowElement.shadowEmployeesList, '.edit-btn.btn.save.medium1.cursor-pointer')
+                    .click();
+
+                functions.getDoubleShadowElement(selectors.shadowElement.shadowEmployeesList, selectors.shadowElement.shadowEmployee, '.employee-data.bold.small')
+                    .should('not.be.visible')
+
             });
 
-
-        // Rotate down by 36 degrees
-        functions.rotateEmployeeList(36, 'down');
-
-        // Rotate back up to 0 degrees
-        functions.rotateEmployeeList(0, 'up');;
-
-
-        functions.getDoubleShadowElement(selectors.shadowElement.shadowEmployeesList, selectors.shadowElement.shadowEmployee, '.border-outer')
-            .eq(0)
-            .click();
-
-        // After clicking, check that the total count text changes to '1'
-        functions.getSingleShadowElement(selectors.shadowElement.shadowEmployeesList, '.total-count')
-            .should('be.visible') // Ensure the total count element is visible
-            .invoke('text') // Get the text of the total count element
-            .should('eq', '1'); // Assert that the text is '1'
-
-
-        functions.getSingleShadowElement(selectors.shadowElement.shadowEmployeesList, '.edit-btn.btn.save.medium1.cursor-pointer')
-            .click();
-
-        cy.wait(config.waitTimes.pageLoad);
-
-        functions.getSingleShadowElement(selectors.shadowElement.shadowEmployeesList, '.members-edit-buttons')
-            .should('be.visible')
-            .click();
-
-        cy.wait(config.waitTimes.pageLoad);
-
-
-        functions.typeInEmployeeSearch('user test');
-
-
-        functions.getDoubleShadowElement(selectors.shadowElement.shadowEmployeesList, selectors.shadowElement.shadowEmployee, '.f_clickable.employee-content.cursor-pointer.selected-community')
-            .should('be.visible')
-            .click();
-
-        functions.getSingleShadowElement(selectors.shadowElement.shadowEmployeesList, '.edit-btn.btn.save.medium1.cursor-pointer')
-            .click();
-
-
     });
-
 });
