@@ -141,10 +141,10 @@ describe('redeem filters tests', () => {
             .click();
 
         // Wait for the page to load after applying the filter
-        cy.wait(config.waitTimes.pageLoad);
+        cy.wait(config.waitTimes.mediumWait);
 
         // Get all the product prices and validate they are within the range 20-100
-        cy.get('.product-price', { timeout: 500 })
+        cy.get('.product-price')
             .each(($price) => {
 
                 // Get the price text and parse it as a number
