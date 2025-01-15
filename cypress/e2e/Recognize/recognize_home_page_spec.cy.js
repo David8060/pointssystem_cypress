@@ -128,6 +128,8 @@ describe('Recognize home page tests', () => {
                     .should('be.visible')
                     .click(); // Click the current wrapper
 
+                cy.wait(config.waitTimes.pageLoad);
+
                 // Assert that the clicked wrapper now has the class 'active'
                 cy.wrap($wrapper)
                     .should('have.class', 'active');

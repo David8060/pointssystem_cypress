@@ -17,9 +17,9 @@ export const config = {
     
     // Wait times (in milliseconds)
     waitTimes: {
-        pageLoad: 1500,       
-        mediumWait: 2000,     
-        longWait: 2500,       
+        pageLoad: 800,       
+        mediumWait: 1300,     
+        longWait: 1700,       
     },
 
     // Other constants
